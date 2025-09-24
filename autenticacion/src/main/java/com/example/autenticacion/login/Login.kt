@@ -2,9 +2,7 @@ package com.example.autenticacion.login
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,8 +14,10 @@ import androidx.compose.ui.unit.dp
 fun LoginScreen(onLoginSuccess: () -> Unit) {
     val context = LocalContext.current
 
-    var user by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -26,35 +26,64 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Usuario
+        // Email
         OutlinedTextField(
-            value = user,
-            onValueChange = { user = it },
-            label = { Text("Usuario") },
+            value = email,
+            onValueChange = {
+                email = it
+                emailError = false
+            },
+            label = { Text("Correo electrónico") },
+            isError = emailError,
             modifier = Modifier.fillMaxWidth()
         )
+        if (emailError) {
+            Text(
+                text = "Debe ser un correo @gmail.com",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Contraseña
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                passwordError = false
+            },
             label = { Text("Contraseña") },
             visualTransformation = PasswordVisualTransformation(),
+            isError = passwordError,
             modifier = Modifier.fillMaxWidth()
         )
+        if (passwordError) {
+            Text(
+                text = "La contraseña no puede estar vacía",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Botón Login
         Button(
             onClick = {
-                if (user == "admin" && password == "1234") {
+                // Validación
+                val isEmailValid = email.endsWith("@gmail.com")
+                val isPasswordValid = password.isNotEmpty()
+
+                emailError = !isEmailValid
+                passwordError = !isPasswordValid
+
+                if (isEmailValid && isPasswordValid) {
                     Toast.makeText(context, "Login exitoso", Toast.LENGTH_SHORT).show()
                     onLoginSuccess()
                 } else {
-                    Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Por favor corrige los errores", Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier.fillMaxWidth()
