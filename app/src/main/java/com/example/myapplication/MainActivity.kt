@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = "Bienvenido a la app 🎉")
+                            Text(text = "Bienvenido a la app de donativos")
                         }
                     } else {
                         // Pantalla de login
